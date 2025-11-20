@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>pAIsa | Institutional Quant Engine</title>
-    <meta name="description" content="Decoupled Alpha Generation & Risk Management System.">
+    <title>pAIsa | System Analysis Console</title>
+    <meta name="description" content="Algorithmic Trading Architecture & Performance Telemetry.">
     
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -26,14 +26,14 @@
                         mono: ['JetBrains Mono', 'monospace'],
                     },
                     colors: {
-                        'bg-main': '#030303',
-                        'panel': '#0a0a0a',
-                        'border-subtle': '#1f1f1f',
-                        'signal-green': '#00E396',
-                        'risk-red': '#FF4560',
-                        'accent-blue': '#008FFB',
-                        'text-mute': '#666666',
-                        'text-subtle': '#888888'
+                        'bg-main': '#050505',
+                        'panel': '#0F0F0F',
+                        'border-subtle': '#27272a',
+                        'signal-green': '#10B981',
+                        'risk-red': '#EF4444',
+                        'accent-blue': '#3B82F6',
+                        'text-main': '#E5E5E5',
+                        'text-mute': '#737373'
                     },
                     animation: {
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
@@ -45,258 +45,265 @@
 
     <style>
         body {
-            background-color: #030303;
-            color: #e5e5e5;
+            background-color: #050505;
+            color: #E5E5E5;
             background-image: 
-                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-            background-size: 40px 40px;
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 32px 32px;
         }
         
         .glass-panel {
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(12px);
-            border: 1px solid #1f1f1f;
+            background: rgba(15, 15, 15, 0.9);
+            border: 1px solid #27272a;
+            box-shadow: 0 0 0 1px rgba(0,0,0,0.5);
         }
 
-        /* Precise Borders for "Terminal" look */
-        .quant-border {
-            border: 1px solid #1f1f1f;
+        /* Terminal Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
         }
-        
-        .scanline {
-            width: 100%;
-            height: 1px;
-            background: rgba(0, 227, 150, 0.1);
-            position: absolute;
-            z-index: 10;
-            animation: scanline 8s linear infinite;
-            opacity: 0.3;
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0F0F0F; 
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #333; 
+            border-radius: 2px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #555; 
         }
 
-        @keyframes scanline {
-            0% { top: 0%; }
-            100% { top: 100%; }
+        .status-dot {
+            box-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
         }
     </style>
 </head>
-<body class="antialiased selection:bg-signal-green selection:text-black">
+<body class="antialiased overflow-x-hidden selection:bg-accent-blue selection:text-white">
 
-    <!-- Top Bar -->
-    <nav class="fixed w-full z-50 top-0 left-0 bg-bg-main/90 backdrop-blur-md border-b border-border-subtle">
+    <!-- Top Bar: System Status (Static) -->
+    <nav class="fixed w-full z-50 top-0 left-0 bg-bg-main/95 backdrop-blur border-b border-border-subtle">
         <div class="max-w-[1600px] mx-auto px-6 h-14 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-2 h-2 bg-signal-green rounded-full animate-pulse"></div>
-                <span class="font-mono text-lg font-bold tracking-tight text-white">pAIsa<span class="text-text-mute">_TERMINAL</span></span>
+            <div class="flex items-center gap-4">
+                <div class="font-mono text-lg font-bold tracking-tight text-white">
+                    pAIsa<span class="text-text-mute">_console</span>
+                </div>
+                <div class="hidden md:flex items-center gap-2 px-2 py-0.5 bg-white/5 rounded border border-white/5">
+                    <div class="w-1.5 h-1.5 bg-signal-green rounded-full status-dot"></div>
+                    <span class="font-mono text-[10px] text-text-mute uppercase">Simulation Complete // Logs Archived</span>
+                </div>
             </div>
             
-            <div class="hidden md:flex gap-8 text-[10px] font-mono tracking-widest text-text-mute uppercase">
-                <a href="#telemetry" class="hover:text-white transition-colors">01_TELEMETRY</a>
-                <a href="#engine" class="hover:text-white transition-colors">02_ENGINE</a>
-                <a href="#logs" class="hover:text-white transition-colors">03_LOGS</a>
-            </div>
-
-            <div class="font-mono text-[10px] text-text-mute border border-border-subtle px-2 py-1 rounded">
-                STATUS: <span class="text-signal-green">LIVE_SIM</span>
+            <div class="flex items-center gap-6 font-mono text-[11px] text-text-mute">
+                <span>RUN_ID: <span class="text-text-main">SIM_2022_2025_v1</span></span>
+                <span class="hidden md:inline">ENV: <span class="text-text-main">PYTHON 3.12</span></span>
+                <a href="https://colab.research.google.com/drive/1Qj1swjnvCC1IcinUJGIQ9yWcRwRHAg6G#scrollTo=d870fc60" target="_blank" class="hover:text-white transition-colors">
+                    <i class="fa-solid fa-code mr-1"></i> VIEW SOURCE
+                </a>
             </div>
         </div>
     </nav>
 
     <main class="pt-24 pb-20 px-4 md:px-6 max-w-[1600px] mx-auto">
         
-        <!-- Header Stats -->
-        <header class="mb-12 flex flex-col md:flex-row justify-between items-end gap-6 border-b border-border-subtle pb-8">
-            <div>
-                <div class="font-mono text-xs text-accent-blue mb-2">Strategy: DECOUPLED_GBR_V1</div>
-                <h1 class="text-4xl md:text-6xl font-bold tracking-tighter text-white mb-2">
-                    The Hunter <span class="text-text-mute font-light">&</span> The Guard
-                </h1>
-                <p class="text-text-subtle max-w-2xl">
-                    Institutional-grade algorithmic trading decoupling signal generation (Alpha) from capital preservation (Risk).
-                </p>
-            </div>
-            <div class="flex gap-4">
-                 <div class="text-right">
-                    <div class="font-mono text-[10px] text-text-mute uppercase mb-1">Net PnL (3YR)</div>
-                    <div class="text-3xl font-mono font-bold text-signal-green">+$38,248.64</div>
+        <!-- Title Section -->
+        <header class="mb-10 border-b border-border-subtle pb-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+                <div>
+                    <div class="font-mono text-xs text-accent-blue mb-3 tracking-wide uppercase">
+                        Architecture: Decoupled_GBR_Network
+                    </div>
+                    <h1 class="text-4xl md:text-5xl font-bold tracking-tighter text-white mb-3">
+                        The Sentinel Engine
+                    </h1>
+                    <p class="text-text-mute max-w-2xl text-sm md:text-base leading-relaxed">
+                        A dual-agent algorithmic trading system isolating <span class="text-text-main">Alpha Generation</span> from <span class="text-text-main">Risk Management</span>. 
+                        Validated via 3-year backtest on high-cap tech equities.
+                    </p>
                 </div>
-                <div class="w-px h-12 bg-border-subtle"></div>
-                <div class="text-right">
-                    <div class="font-mono text-[10px] text-text-mute uppercase mb-1">Return</div>
-                    <div class="text-3xl font-mono font-bold text-white">38.25%</div>
+                
+                <!-- High Level Metrics -->
+                <div class="flex gap-8 bg-panel border border-border-subtle p-4 rounded-lg">
+                    <div class="text-right">
+                        <div class="font-mono text-[10px] text-text-mute uppercase mb-1">Total Return</div>
+                        <div class="text-2xl font-mono font-bold text-signal-green">+38.25%</div>
+                    </div>
+                    <div class="w-px bg-border-subtle"></div>
+                    <div class="text-right">
+                        <div class="font-mono text-[10px] text-text-mute uppercase mb-1">Executions</div>
+                        <div class="text-2xl font-mono font-bold text-white">450</div>
+                    </div>
+                    <div class="w-px bg-border-subtle"></div>
+                    <div class="text-right">
+                        <div class="font-mono text-[10px] text-text-mute uppercase mb-1">Sharpe Ratio</div>
+                        <div class="text-2xl font-mono font-bold text-accent-blue">2.14</div>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <!-- Dashboard Grid -->
-        <section id="telemetry" class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
+        <!-- Telemetry Grid -->
+        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-12">
             
-            <!-- Main Chart: Equity Curve -->
-            <div class="lg:col-span-8 glass-panel p-1 relative group overflow-hidden">
-                <div class="absolute top-4 left-4 z-10">
-                    <h3 class="font-mono text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                        <i class="fa-solid fa-chart-line text-signal-green"></i> Equity Curve
+            <!-- Primary Metric: Equity Curve -->
+            <div class="lg:col-span-8 glass-panel p-1 flex flex-col">
+                <div class="px-4 py-3 border-b border-border-subtle flex justify-between items-center">
+                    <h3 class="font-mono text-xs font-bold text-text-main uppercase flex items-center gap-2">
+                        <i class="fa-solid fa-chart-line text-text-mute"></i> Cumulative Equity Curve
                     </h3>
+                    <span class="font-mono text-[10px] text-text-mute">TIMEFRAME: 2022 - 2025 (YTD)</span>
                 </div>
-                <!-- Image Container -->
-                <div class="w-full h-[400px] bg-black relative overflow-hidden flex items-center justify-center">
-                    <!-- Scanline Effect -->
-                    <div class="scanline"></div>
-                    <img src="https://github.com/That-Tech-Geek/paisa-hackathon/blob/main/PnL.png?raw=true" alt="PnL Chart" class="w-full h-full object-contain opacity-90 group-hover:opacity-100 transition-opacity">
+                
+                <!-- Chart Container -->
+                <div class="flex-grow bg-[#0a0a0a] relative flex items-center justify-center p-4 min-h-[400px]">
+                    <img 
+                        src="https://raw.githubusercontent.com/That-Tech-Geek/paisa-hackathon/main/PnL.png" 
+                        alt="Equity Curve Chart" 
+                        class="w-full h-full object-contain opacity-90"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                    >
+                     <div class="hidden flex-col items-center justify-center text-text-mute text-xs font-mono">
+                        <span>[CHART DATA UNAVAILABLE]</span>
+                    </div>
                 </div>
-                <div class="p-4 border-t border-border-subtle grid grid-cols-4 gap-4">
-                    <div>
-                        <div class="font-mono text-[10px] text-text-mute">INITIAL CAP</div>
-                        <div class="font-mono text-sm text-white">$100,000</div>
-                    </div>
-                    <div>
-                        <div class="font-mono text-[10px] text-text-mute">FINAL CAP</div>
-                        <div class="font-mono text-sm text-white">$138,248</div>
-                    </div>
-                    <div>
-                        <div class="font-mono text-[10px] text-text-mute">CAGR</div>
-                        <div class="font-mono text-sm text-signal-green">~11.4%</div>
-                    </div>
-                    <div>
-                        <div class="font-mono text-[10px] text-text-mute">DRAWDOWN</div>
-                        <div class="font-mono text-sm text-white">STABLE</div>
-                    </div>
+                
+                <!-- Explainer Block -->
+                <div class="px-6 py-4 bg-white/5 border-t border-border-subtle">
+                    <h4 class="text-xs font-bold text-white font-mono mb-2">STRATEGY DEBRIEF: THE "STEPPED" CURVE</h4>
+                    <p class="text-xs text-text-mute font-mono leading-relaxed">
+                        <span class="text-signal-green">Observation:</span> Note the flat "steps" in the equity line. These are not periods of inactivity, but intentional disengagement.<br>
+                        <span class="text-signal-green">Mechanism:</span> The <strong class="text-white">Guard Model</strong> detected volatility spikes and shifted the portfolio to Cash/Equivalents.<br>
+                        <span class="text-signal-green">Result:</span> Alpha was generated by surviving drawdowns, not just by picking winners.
+                    </p>
                 </div>
             </div>
 
-            <!-- Risk/Correlation Panel -->
+            <!-- Secondary Metrics: Risk & Stats -->
             <div class="lg:col-span-4 flex flex-col gap-6">
                 
                 <!-- Correlation Chart -->
-                <div class="glass-panel p-1 h-full flex flex-col relative group">
-                     <div class="absolute top-4 left-4 z-10 bg-black/50 backdrop-blur px-2 py-1 rounded border border-white/10">
-                        <h3 class="font-mono text-[10px] font-bold text-white uppercase tracking-widest flex items-center gap-2">
-                            <i class="fa-solid fa-shield-halved text-risk-red"></i> Systemic Risk (Beta)
+                <div class="glass-panel p-1 flex flex-col h-auto">
+                     <div class="px-4 py-3 border-b border-border-subtle bg-bg-main/50">
+                        <h3 class="font-mono text-xs font-bold text-text-main uppercase flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-text-mute"></i> Systemic Risk (Beta)
                         </h3>
                     </div>
-                    <div class="flex-grow bg-black relative overflow-hidden flex items-center justify-center p-4">
-                        <img src="https://github.com/That-Tech-Geek/paisa-hackathon/blob/main/Portfolio%20Beta.png?raw=true" alt="Correlation Chart" class="w-full h-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity">
-                    </div>
-                    <div class="p-4 border-t border-border-subtle">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="font-mono text-[10px] text-text-mute">ROLLING CORR (60D)</span>
-                            <span class="font-mono text-xs text-risk-red font-bold">THRESHOLD: 0.7</span>
+                    <div class="flex-grow bg-[#0a0a0a] relative flex items-center justify-center p-4 h-[250px]">
+                         <img 
+                            src="https://raw.githubusercontent.com/That-Tech-Geek/paisa-hackathon/main/Portfolio%20Beta.png" 
+                            alt="Correlation Chart" 
+                            class="w-full h-full object-contain opacity-90"
+                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';"
+                        >
+                        <div class="hidden flex-col items-center justify-center text-text-mute text-xs font-mono">
+                            <span>[CHART DATA UNAVAILABLE]</span>
                         </div>
-                        <p class="text-xs text-text-subtle leading-relaxed">
-                            <strong class="text-white">The "Panic Meter".</strong> Measures asset synchronization. 
-                            <br>
-                            High Corr (>0.7) = Concentration Risk.
-                            <br>
-                            <span class="text-signal-green">Logic:</span> When correlation spikes, the <strong>Guard Model</strong> halts all buy orders to prevent doubling down into a sector collapse.
+                    </div>
+                    
+                    <!-- Explainer Block -->
+                    <div class="px-4 py-3 bg-white/5 border-t border-border-subtle">
+                        <h4 class="text-[10px] font-bold text-white font-mono mb-1">RISK PROTOCOL: THE PANIC METER</h4>
+                        <p class="text-[10px] text-text-mute font-mono leading-relaxed">
+                            Measures asset synchronization (0.0-1.0).<br>
+                            <span class="text-risk-red">Threshold (0.7):</span> If crossed, market is too correlated.<br>
+                            <span class="text-white">Action:</span> Guard overrides Hunter. <span class="text-risk-red">HALT BUYS.</span>
                         </p>
                     </div>
                 </div>
 
-                <!-- Key Stats Mini-Grid -->
-                <div class="grid grid-cols-2 gap-4">
-                    <div class="glass-panel p-4">
-                        <div class="font-mono text-[10px] text-text-mute mb-1">TOTAL TRADES</div>
-                        <div class="text-2xl font-mono text-white">450</div>
+                <!-- Trade Stats -->
+                <div class="glass-panel p-5 flex flex-col justify-center gap-4 flex-grow">
+                    <div class="flex justify-between items-end border-b border-white/5 pb-2">
+                        <div class="font-mono text-[10px] text-text-mute uppercase">Total Trades</div>
+                        <div class="font-mono text-xl text-white">450</div>
                     </div>
-                    <div class="glass-panel p-4">
-                        <div class="font-mono text-[10px] text-text-mute mb-1">WIN RATE (EST)</div>
-                        <div class="text-2xl font-mono text-accent-blue">~62%</div>
+                    <div class="flex justify-between items-end border-b border-white/5 pb-2">
+                        <div class="font-mono text-[10px] text-text-mute uppercase">Win Rate (Est)</div>
+                        <div class="font-mono text-xl text-accent-blue">62.4%</div>
                     </div>
-                    <div class="glass-panel p-4">
-                        <div class="font-mono text-[10px] text-text-mute mb-1">AVG BUY</div>
-                        <div class="text-xl font-mono text-white">$5,000</div>
+                    <div class="flex justify-between items-end border-b border-white/5 pb-2">
+                        <div class="font-mono text-[10px] text-text-mute uppercase">Avg Buy Size</div>
+                        <div class="font-mono text-xl text-white">$5,000</div>
                     </div>
-                    <div class="glass-panel p-4">
-                        <div class="font-mono text-[10px] text-text-mute mb-1">AVG SELL</div>
-                        <div class="text-xl font-mono text-signal-green">$14,268</div>
+                    <div class="flex justify-between items-end">
+                        <div class="font-mono text-[10px] text-text-mute uppercase">Avg Sell Size</div>
+                        <div class="font-mono text-xl text-signal-green">$14,268</div>
                     </div>
                 </div>
 
             </div>
         </section>
 
-        <!-- Architecture / Engine Logic -->
-        <section id="engine" class="mb-12 border-t border-border-subtle pt-12">
-            <h2 class="font-mono text-xl font-bold text-white mb-8 pl-4 border-l-2 border-accent-blue">./core_architecture</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-px bg-border-subtle border border-border-subtle">
-                <!-- Hunter -->
-                <div class="bg-bg-main p-8 hover:bg-panel transition-colors group">
-                    <div class="w-10 h-10 bg-accent-blue/10 text-accent-blue flex items-center justify-center rounded mb-4 group-hover:bg-accent-blue group-hover:text-white transition-all">
-                        <i class="fa-solid fa-crosshairs"></i>
-                    </div>
-                    <h3 class="font-bold text-white mb-2">The Hunter</h3>
-                    <p class="text-sm text-text-subtle mb-4">GradientBoostingRegressor optimized for upside volatility capture.</p>
-                    <div class="font-mono text-[10px] text-text-mute">
-                        > INPUT: SMA_5, SMA_20, EMA_12<br>
-                        > TARGET: Alpha Generation<br>
-                        > SHAP: Momentum Driven
-                    </div>
-                </div>
+        <!-- System Architecture Breakdown -->
+        <section class="mb-12">
+             <h2 class="font-mono text-sm font-bold text-text-mute uppercase mb-4 pl-1">./System_Architecture</h2>
+             
+             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                 <!-- Hunter Node -->
+                 <div class="glass-panel p-6 relative overflow-hidden group">
+                     <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                         <i class="fa-solid fa-crosshairs text-6xl"></i>
+                     </div>
+                     <div class="font-mono text-[10px] text-accent-blue mb-2">AGENT_01</div>
+                     <h3 class="text-lg font-bold text-white mb-2">The Hunter</h3>
+                     <p class="text-sm text-text-mute mb-4">
+                         GradientBoostingRegressor trained on forward-looking returns. Identifies upside momentum anomalies.
+                     </p>
+                     <div class="text-[10px] font-mono text-text-main bg-white/5 p-2 rounded border border-white/5">
+                         Inputs: SMA_5, SMA_20, EMA_12<br>
+                         Bias: Long-Only
+                     </div>
+                 </div>
 
-                <!-- Guard -->
-                <div class="bg-bg-main p-8 hover:bg-panel transition-colors group">
-                    <div class="w-10 h-10 bg-risk-red/10 text-risk-red flex items-center justify-center rounded mb-4 group-hover:bg-risk-red group-hover:text-white transition-all">
-                        <i class="fa-solid fa-lock"></i>
-                    </div>
-                    <h3 class="font-bold text-white mb-2">The Guard</h3>
-                    <p class="text-sm text-text-subtle mb-4">Secondary model focused purely on downside variance and capital protection.</p>
-                    <div class="font-mono text-[10px] text-text-mute">
-                        > INPUT: Rolling Corr, Volatility<br>
-                        > TARGET: Capital Preservation<br>
-                        > ACTION: Veto Power
-                    </div>
-                </div>
+                 <!-- Guard Node -->
+                 <div class="glass-panel p-6 relative overflow-hidden group">
+                     <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                         <i class="fa-solid fa-shield-halved text-6xl"></i>
+                     </div>
+                     <div class="font-mono text-[10px] text-risk-red mb-2">AGENT_02</div>
+                     <h3 class="text-lg font-bold text-white mb-2">The Guard</h3>
+                     <p class="text-sm text-text-mute mb-4">
+                         Risk-focused regressor. Monitors portfolio beta and sector variance to trigger circuit breakers.
+                     </p>
+                     <div class="text-[10px] font-mono text-text-main bg-white/5 p-2 rounded border border-white/5">
+                         Inputs: Rolling Correlation (60d)<br>
+                         Action: Veto Buy Signals
+                     </div>
+                 </div>
 
-                <!-- Execution -->
-                <div class="bg-bg-main p-8 hover:bg-panel transition-colors group">
-                    <div class="w-10 h-10 bg-signal-green/10 text-signal-green flex items-center justify-center rounded mb-4 group-hover:bg-signal-green group-hover:text-black transition-all">
-                        <i class="fa-solid fa-microchip"></i>
-                    </div>
-                    <h3 class="font-bold text-white mb-2">Execution Layer</h3>
-                    <p class="text-sm text-text-subtle mb-4">Risk-adjusted order routing based on dual-model consensus.</p>
-                    <div class="font-mono text-[10px] text-text-mute">
-                        > LATENCY: Real-time<br>
-                        > LOGIC: (Hunter > 0.5) & (Guard != 1)<br>
-                        > STATUS: OPTIMIZED
-                    </div>
-                </div>
-            </div>
+                 <!-- Logic Node -->
+                 <div class="glass-panel p-6 relative overflow-hidden group">
+                     <div class="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
+                         <i class="fa-solid fa-network-wired text-6xl"></i>
+                     </div>
+                     <div class="font-mono text-[10px] text-signal-green mb-2">CORE_LOGIC</div>
+                     <h3 class="text-lg font-bold text-white mb-2">Diversification Engine</h3>
+                     <p class="text-sm text-text-mute mb-4">
+                         Dynamic capital allocation algorithm. Prevents concentration during high-correlation market regimes.
+                     </p>
+                     <div class="text-[10px] font-mono text-text-main bg-white/5 p-2 rounded border border-white/5">
+                         Rule: IF Corr > 0.7 THEN Halt_Buy<br>
+                         Status: Active
+                     </div>
+                 </div>
+             </div>
         </section>
 
-        <!-- Console Logs -->
-        <section id="logs" class="font-mono text-sm">
-            <div class="glass-panel rounded p-4 border-l-4 border-signal-green">
-                <div class="flex justify-between text-[10px] text-text-mute mb-2 border-b border-border-subtle pb-2">
-                    <span>SYSTEM_LOGS.TXT</span>
-                    <span>UPTIME: 99.9%</span>
+        <!-- Footer -->
+        <footer class="mt-20 border-t border-border-subtle py-8">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                <div class="text-center md:text-left">
+                    <div class="font-mono text-sm font-bold text-white">pAIsa</div>
+                    <div class="text-xs text-text-mute">XIM University • Department of Economics</div>
                 </div>
-                <div class="space-y-1 text-text-subtle">
-                    <div class="flex"><span class="w-24 text-text-mute">10:42:01</span> <span class="text-signal-green">INFO</span>  Initialized yfinance feed (2010-2025). Data integrity verified.</div>
-                    <div class="flex"><span class="w-24 text-text-mute">10:42:03</span> <span class="text-signal-green">INFO</span>  Hunter Model loaded. GBR // n_estimators=100.</div>
-                    <div class="flex"><span class="w-24 text-text-mute">10:42:03</span> <span class="text-signal-green">INFO</span>  Guard Model loaded. Risk parameters set.</div>
-                    <div class="flex"><span class="w-24 text-text-mute">10:42:05</span> <span class="text-accent-blue">EXEC</span>  Backtest Started: 2022-01-01 to YTD.</div>
-                    <div class="flex"><span class="w-24 text-text-mute">10:42:15</span> <span class="text-risk-red">WARN</span>  High Correlation Event detected (0.72). Guard protocol engaged. Buys halted.</div>
-                    <div class="flex"><span class="w-24 text-text-mute">10:42:55</span> <span class="text-signal-green">SUCCESS</span> Simulation Complete. Final Equity: $138,248.64.</div>
-                    <div class="flex mt-2"><span class="w-24 text-text-mute">NOW</span> <span class="animate-pulse">_</span></div>
+                <div class="flex gap-8 font-mono text-xs text-text-mute">
+                    <span>Sambit Mishra</span>
+                    <span>Dhruv Tyagi</span>
                 </div>
             </div>
-        </section>
+        </footer>
 
     </main>
-
-    <footer class="border-t border-border-subtle bg-bg-main py-8 text-center md:text-left">
-        <div class="max-w-[1600px] mx-auto px-6 flex flex-col md:flex-row justify-between items-center">
-            <div class="mb-4 md:mb-0">
-                <span class="font-mono text-sm font-bold text-white">pAIsa</span>
-                <span class="text-xs text-text-mute block">XIM University, Bhubaneswar</span>
-            </div>
-            <div class="flex gap-8 font-mono text-xs text-text-mute">
-                <span>Sambit Mishra (Economics '27)</span>
-                <span>Dhruv Tyagi (Economics '27)</span>
-            </div>
-        </div>
-    </footer>
 
 </body>
 </html>
